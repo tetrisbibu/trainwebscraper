@@ -1,12 +1,20 @@
 import requests
 from bs4 import BeautifulSoup
 
-headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36'
-}
+url = 'https://quotes.toscrape.com'
+response = requests.get(url)
+response.raise_for_status()
 
-page = requests.get('https://quotes.toscrape.com', headers=headers)
-soup = BeautifulSoup(page.text, 'html.parser')
+soup = BeautifulSoup(response.text, 'html.parser')
+qoute_blocks = soup.find_all('div', class_='quote')
 
-h1_elements = soup.find_all('h1')
-main_title_element = soup.find(id='main')
+for quote in qoute_blocks:
+    text = quote.find('span', class_='text').get_text(strip=True)
+    author = quote.find("small", class_="author").get_text(strip=True)
+    tags = [tag.get_text(strip=True) for tag in quote.find_all('a', class_='tag')]
+
+    print(text)
+    print(author)
+    print(tags)
+    print('-' * 40)
+
